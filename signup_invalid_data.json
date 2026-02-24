@@ -1,0 +1,38 @@
+[
+    {
+        "testCase": "Registration with Empty Username",
+        "username": "",
+        "password": "password123",
+        "expectedStatus": 400
+    },
+    {
+        "testCase": "Registration with Missing Password",
+        "username": "tester_new_01",
+        "password": "",
+        "expectedStatus": 400
+    },
+    {
+        "testCase": "Username with Only Spaces",
+        "username": "   ",
+        "password": "password123",
+        "expectedStatus": 400
+    },
+    {
+        "testCase": "Username Too Short (2 chars)",
+        "username": "ab",
+        "password": "validPassword123",
+        "expectedStatus": 400
+    },
+    {
+        "testCase": "Username Too Long (16 chars)",
+        "username": "longusername1234",
+        "password": "validPassword123",
+        "expectedStatus": 400
+    },
+    {
+        "testCase": "Password Too Short (7 chars)",
+        "username": "validUser",
+        "password": "short12",
+        "expectedStatus": 400
+    }
+]

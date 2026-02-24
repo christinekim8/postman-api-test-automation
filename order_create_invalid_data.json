@@ -1,0 +1,26 @@
+[
+  {
+    "testCase": "Create Order with Zero Quantity",
+    "productId": 1,
+    "qty": 0,
+    "expectedStatus": 400
+  },
+  {
+    "testCase": "Create Order with Negative Quantity",
+    "productId": 1,
+    "qty": -5,
+    "expectedStatus": 400
+  },
+  {
+    "testCase": "Create Order with Insufficient Stock",
+    "productId": 1,
+    "qty": 99999,
+    "expectedStatus": 400
+  },
+  {
+    "testCase": "Create Order with Non-Existent Product ID",
+    "productId": 999,
+    "qty": 1,
+    "expectedStatus": 404
+  }
+]

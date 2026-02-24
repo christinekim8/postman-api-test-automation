@@ -1,0 +1,39 @@
+name: API Automation CI
+
+# This workflow runs whenever code is pushed to the main branch
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  api-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Fetch the latest code from the GitHub repository
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Setup Node.js environment on the runner
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    # 3. Install necessary server-side dependencies (Express, etc.)
+    - name: Install Dependencies
+      run: npm install
+
+    # 4. Install Newman for Postman CLI testing
+    - name: Install Newman
+      run: npm install -g newman
+
+    # 5. Start the server in the background and execute Postman tests
+    - name: Run Server and Test
+      run: |
+        # Run server in the background using '&'
+        node server.js &
+        # Wait for 5 seconds to ensure the server is fully up and running
+        sleep 5
+        # Execute Postman collection using Newman with environment file
+        newman run postman_collection.json -e postman_environment.json

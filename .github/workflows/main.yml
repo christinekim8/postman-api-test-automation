@@ -35,5 +35,7 @@ jobs:
         node server.js &
         # Wait for 5 seconds to ensure the server is fully up and running
         sleep 5
-        # Execute Postman collection using Newman with environment file
-        newman run postman_collection.json -e postman_environment.json
+        # Execute Postman collection using Newman with environment file 
+        newman run tests/postman_collection.json \
+                   -e tests/postman_environment.json \
+                   -d tests/data/order_update_invalid_data.json

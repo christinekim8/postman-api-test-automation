@@ -1,0 +1,17 @@
+[
+  {
+    "testCase": "Negative Quantity",
+    "qty": -1,
+    "expectedStatus": 400
+  },
+  {
+    "testCase": "String Value",
+    "qty": "invalid_qty",
+    "expectedStatus": 400
+  },
+  {
+    "testCase": "Missing Quantity",
+    "qty": null,
+    "expectedStatus": 400
+  }
+]

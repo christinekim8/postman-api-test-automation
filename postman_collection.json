@@ -815,6 +815,17 @@
                 "packages": {},
                 "requests": {}
               }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             }
           ],
           "request": {
@@ -831,13 +842,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/orders/9999999",
+              "raw": "{{base_url}}/orders/9999",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "orders",
-                "9999999"
+                "9999"
               ]
             }
           },
@@ -857,8 +868,19 @@
                   "pm.test(\"Order quantity is updated correctly\", function () {\r",
                   "    const jsonData = pm.response.json();\r",
                   "    pm.expect(jsonData.message).to.eql(\"Order updated successfully.\");\r",
-                  "    pm.expect(jsonData.order.quantity).to.eql(10);\r",
+                  "    pm.expect(jsonData.order.quantity).to.eql(5);\r",
                   "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -881,7 +903,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\"quantity\": 10}",
+              "raw": "{\"quantity\": 5}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -965,7 +987,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"quantity\": {{qty}}\r\n}",
+              "raw": "{\r\n  \"quantity\": \"{{qty}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

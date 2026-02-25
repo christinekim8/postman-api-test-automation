@@ -168,34 +168,53 @@ app.get('/orders/:id', authenticateToken, (req, res) => {
 
 // --- [7] ORDERS: Update Order (PUT /orders/:id) ---
 app.put('/orders/:id', authenticateToken, (req, res) => {
+    // Extract ID from parameters and quantity from request body
     const id = parseInt(req.params.id);
     const { quantity } = req.body; 
+    
+    // Find the order index in the memory array
     const orderIndex = orders.findIndex(o => o.orderId === id);
 
-    if (orderIndex === -1) return res.status(404).json({ message: "Order not found." });
+    // Return 404 if the order does not exist
+    if (orderIndex === -1) {
+        return res.status(404).json({ message: "Order not found." });
+    }
 
+    // Security Check: Ensure the user only updates their own orders
     if (orders[orderIndex].username !== req.user.username) {
         return res.status(403).json({ message: "Permission denied for this update." });
     }
 
+    // Validate the requested quantity
     const newQty = parseInt(quantity);
-    if (isNaN(newQty) || newQty <= 0) {
+
+    // Check for null, undefined, non-numeric values, or non-positive integers
+    // This handles both Data-Driven Testing (DDT) edge cases and invalid JSON strings
+    if (quantity === null || quantity === undefined || isNaN(newQty) || newQty <= 0) {
         return res.status(400).json({ message: "Invalid quantity provided." });
     }
 
+    // Check for product availability and handle stock adjustments
     const product = products.find(p => p.id === orders[orderIndex].productId);
     const quantityDiff = newQty - orders[orderIndex].quantity;
 
+    // Reject the update if the requested increase exceeds available stock
     if (product.stock < quantityDiff) {
         return res.status(400).json({ message: "Update failed due to stock limitations." });
     }
 
+    // Update the stock and order details
     product.stock -= quantityDiff;
     orders[orderIndex].quantity = newQty;
 
+    // Log the transaction for server-side monitoring
     console.log(`[Update] Order ${id} updated to ${newQty}. Remaining stock: ${product.stock}`);
 
-    res.json({ message: "Order updated successfully.", order: orders[orderIndex] });
+    // Return the successful update response
+    res.json({ 
+        message: "Order updated successfully.", 
+        order: orders[orderIndex] 
+    });
 });
 
 // --- [8] ORDERS: Delete Order (DELETE /orders/:id) ---

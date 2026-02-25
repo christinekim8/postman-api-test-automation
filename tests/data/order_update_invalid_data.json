@@ -5,12 +5,12 @@
     "expectedStatus": 400
   },
   {
-    "testCase": "String Value",
-    "qty": "invalid_qty",
+    "testCase": "Zero Quantity",
+    "qty": 0,
     "expectedStatus": 400
   },
   {
-    "testCase": "Missing Quantity",
+    "testCase": "Null Value",
     "qty": null,
     "expectedStatus": 400
   }

@@ -1,17 +1,27 @@
 {
   "name": "my-api-test-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Postman API Automation with Professional HTML Reporting",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
+    "start": "node server.js",
+    "test:all": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_create_invalid_data.json -r htmlextra --suppress-exit-code --reporter-htmlextra-export ./reports/create.html && newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_update_invalid_data.json -r htmlextra --suppress-exit-code --reporter-htmlextra-export ./reports/update.html && newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/signup_invalid_data.json -r htmlextra --suppress-exit-code --reporter-htmlextra-export ./reports/signup.html"  },
+  "keywords": [
+    "api-testing",
+    "postman",
+    "newman",
+    "htmlextra",
+    "automation"
+  ],
+  "author": "Christine Kim",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "newman": "^6.2.2",
+    "newman-reporter-htmlextra": "^1.23.1"
   }
 }

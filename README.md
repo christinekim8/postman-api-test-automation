@@ -1,6 +1,6 @@
 # 🚀 Postman API Test Automation Portfolio
 
-![API Automation CI](https://github.com/christinekim8/postman-api-test-automation/actions/workflows/main.yml/badge.svg)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/christinekim8/postman-api-test-automation/main.yml?style=for-the-badge&logo=github-actions&label=Build)](https://github.com/christinekim8/postman-api-test-automation/actions)
 [![Allure Report](https://img.shields.io/badge/Allure%20Report-Live%20Dashboard-yellowgreen?style=for-the-badge&logo=allure)](https://christinekim8.github.io/postman-api-test-automation/)
 [![API Testing](https://img.shields.io/badge/API%20Testing-Postman%20%2F%20Newman-orange?style=for-the-badge&logo=postman)](https://github.com/christinekim8/postman-api-test-automation)
 

@@ -30,7 +30,7 @@ jobs:
       # --exit-code-from: Ensures the CI job fails if any test fails
       - name: Run Tests with Docker Compose
         run: |
-          docker-compose up --build --exit-code-from api-tester
+          docker compose up --build --exit-code-from api-tester
 
       # 5. Generate Allure Report from the results mapped via Volumes
       - name: Install Allure CLI & Generate Report

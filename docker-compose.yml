@@ -29,11 +29,8 @@ services:
     # Step 1: Install newman and allure-reporter inside the container
     # Step 2: Run newman and export results to the mapped volume
     entrypoint: >
-      sh -c "npm install -g newman newman-reporter-allure &&
-             newman run /etc/newman/postman_collection.json 
-             -e /etc/newman/postman_environment.json 
-             -r cli,allure 
-             --reporter-allure-export /etc/reports/allure-results"
+      sh -c "npm install -g newman newman-reporter-allure && 
+      newman run /etc/newman/postman_collection.json -e /etc/newman/postman_environment.json -r cli,allure --reporter-allure-export /etc/reports/allure-results"
 
 networks:
   test-network:

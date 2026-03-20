@@ -9,47 +9,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Fetch the source code from the repository
+      # 1. Fetch the source code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js environment for Allure report generation
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # 3. Update environment variables for the Docker network
-      # Replaces 'localhost' with 'api-server' to allow communication between containers
+      # 3. [Robust Fix] Update base_url for Docker Network
+      # Using a temp file for maximum compatibility across different sed versions
       - name: Update base_url for Docker Network
         run: |
-          sed -i 's/localhost:3000/api-server:3000/g' tests/postman_environment.json
+          sed 's/localhost:3000/api-server:3000/g' tests/postman_environment.json > tests/postman_environment.json.tmp && mv tests/postman_environment.json.tmp tests/postman_environment.json
 
-      # 4. Build and Run containers using Docker Compose
-      # --exit-code-from ensures the CI fails if the tester container fails
+      # 4. Build and Run containers
       - name: Run Tests with Docker Compose
         run: |
           docker compose up --build --exit-code-from api-tester
 
-      # 5. Fix file permissions for Docker-generated reports
-      # Required because Docker creates files with root ownership, blocking the CI runner
-      - name: Fix permissions for reports
+      # 5. [Crucial] Fix file permissions for Docker-generated reports
+      # Docker (root) locks these; we unlock them so the runner can read the results
+      - name: "Fix permissions for reports"
         if: always()
         run: sudo chmod -R 777 reports
 
-      # 6. Verify existence of test results (Debug info)
+      # 6. Verify existence of test results
       - name: "Debug: List test results"
         if: always()
         run: ls -R ./reports
 
-      # 7. Generate Allure Report from the raw results
+      # 7. Generate Allure Report
       - name: Install Allure CLI & Generate Report
         if: always()
         run: |
           npm install -g allure-commandline
           allure generate ./reports/allure-results --clean -o allure-report
 
-      # 8. Deploy the final interactive report to GitHub Pages
+      # 8. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v4

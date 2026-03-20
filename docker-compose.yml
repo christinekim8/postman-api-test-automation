@@ -17,7 +17,7 @@ services:
 
   # 2. API Tester: Runs Newman to execute Postman tests
   api-tester:
-    image: node:18-alpine # Use a full node image to install the reporter
+    image: node:18-alpine
     depends_on:
       api-server:
         condition: service_healthy
@@ -26,12 +26,11 @@ services:
       - ./reports:/etc/reports
     networks:
       - test-network
-    # Step 1: Install newman and allure-reporter inside the container
-    # Step 2: Run newman and export results to the mapped volume
+    # Added 'mkdir -p' inside the container to ensure the directory exists before Newman runs
     entrypoint: >
-      sh -c "npm install -g newman newman-reporter-allure && 
+      sh -c "mkdir -p /etc/reports/allure-results && 
+      npm install -g newman newman-reporter-allure && 
       newman run /etc/newman/postman_collection.json -e /etc/newman/postman_environment.json -r cli,allure --reporter-allure-export /etc/reports/allure-results"
-
 networks:
   test-network:
     driver: bridge

@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # 1. API Server: Runs the Node.js application
+  api-server:
+    build: .
+    ports:
+      - "3000:3000"
+    healthcheck:
+      # Check if the server is ready to accept requests
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # 2. API Tester: Runs Newman to execute Postman tests
+  api-tester:
+    image: postman/newman:latest
+    depends_on:
+      api-server:
+        condition: service_healthy # Wait until the server is fully up
+    volumes:
+      # Sync host test files to container
+      - ./tests:/etc/newman
+      # Sync container test results back to host for Allure reporting
+      - ./reports:/etc/reports
+    networks:
+      - test-network
+    # Use 'api-server' as the hostname instead of 'localhost'
+    entrypoint:
+      - newman
+      - run
+      - /etc/newman/postman_collection.json
+      - -e
+      - /etc/newman/postman_environment.json
+      - -r
+      - cli,allure
+      - --reporter-allure-export
+      - /etc/reports/allure-results
+
+networks:
+  test-network:
+    driver: bridge

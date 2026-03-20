@@ -1,4 +1,4 @@
-name: API Automation CI
+name: API Automation CI (Docker Edition)
 
 on:
   push:
@@ -9,43 +9,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Fetch the latest code from the repository
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      # 1. Fetch the source code
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    # 2. Setup Node.js environment
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      # 2. Setup Node.js (Required to generate the Allure report later)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-    # 3. Install project dependencies and reporters
-    - name: Install Dependencies
-      run: |
-        npm install
-        npm install -g newman newman-reporter-allure allure-commandline
+      # 3. [PRO TRICK] Automatically switch to Docker network address
+      # This replaces 'localhost' with 'api-server' only during the CI run.
+      # Your local file remains unchanged!
+      - name: Update baseUrl for Docker Network
+        run: |
+          sed -i 's/localhost:3000/api-server:3000/g' tests/postman_environment.json
 
-    # 4. Start the server and execute tests with Allure reporter
-    - name: Run Server and Test
-      run: |
-        node server.js &
-        sleep 5
-        # Execute tests and generate results in 'allure-results' folder
-        newman run tests/postman_collection.json \
-          -e tests/postman_environment.json \
-          -r allure \
-          --reporter-allure-export ./allure-results
+      # 4. Build and Run containers using Docker Compose
+      # --exit-code-from: Ensures the CI job fails if any test fails
+      - name: Run Tests with Docker Compose
+        run: |
+          docker-compose up --build --exit-code-from api-tester
 
-    # 5. Generate the final Allure HTML report
-    - name: Generate Allure Report
-      if: always()
-      run: |
-        allure generate ./allure-results --clean -o allure-report
+      # 5. Generate Allure Report from the results mapped via Volumes
+      - name: Install Allure CLI & Generate Report
+        if: always()
+        run: |
+          npm install -g allure-commandline
+          allure generate ./reports/allure-results --clean -o allure-report
 
-    # 6. Deploy the report to GitHub Pages (gh-pages branch)
-    - name: Deploy to GitHub Pages
-      if: always()
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./allure-report
+      # 6. Deploy the final report to GitHub Pages
+      - name: Deploy to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report

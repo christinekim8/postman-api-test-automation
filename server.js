@@ -16,6 +16,12 @@ const SECRET_KEY = "australia-sqa-portfolio-key";
 
 app.use(bodyParser.json());
 
+// --- [0] HEALTH CHECK: For Docker/Deployment monitoring ---
+app.get('/health', (req, res) => {
+    // Returns 200 OK to tell Docker the server is ready
+    res.status(200).send('OK');
+});
+
 /**
  * IN-MEMORY DATA STORE
  * Note: Data resets when the server restarts.

@@ -1,0 +1,2 @@
+level: log, messages: [Dynamic Selection] Total Orders: 1
+level: log, messages: [Dynamic Selection] Picked Order ID 1 (Merino Wool Socks (Grey)) for next test.

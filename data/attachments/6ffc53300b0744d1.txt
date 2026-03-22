@@ -1,0 +1,3 @@
+level: log, messages: [Pre-request] Selected Product ID: 7, Name: Eucalyptus Oil (100ml)
+level: log, messages: ✅ Final Local Variables -> order_pid: 7, order_qty: 1
+level: log, messages: Order Created: ID 1, Product: Eucalyptus Oil (100ml)

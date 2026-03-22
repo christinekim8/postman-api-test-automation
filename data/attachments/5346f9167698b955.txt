@@ -1,0 +1,2 @@
+level: log, messages: [Dynamic Selection] Total Orders: 1
+level: log, messages: [Dynamic Selection] Picked Order ID 1 (Lucas' Paw Paw Ointment (25g)) for next test.

@@ -1,0 +1,1 @@
+level: log, messages: [Negative Test] Scenario: Password Too Short (7 chars) | Server Response: Invalid quantity provided.

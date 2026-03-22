@@ -1,0 +1,2 @@
+level: log, messages: [Setup] PID: 999, QTY: 0
+level: log, messages: [DDT Log] Case: Registration with Missing Password | Server Response: Username must be between 3 and 15 characters.

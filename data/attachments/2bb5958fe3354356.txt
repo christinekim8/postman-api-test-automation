@@ -1,0 +1,1 @@
+level: log, messages: [Negative Test] Scenario: Create Order with Negative Quantity | Server Response: Invalid quantity provided.

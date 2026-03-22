@@ -4,82 +4,105 @@
 [![Allure Report](https://img.shields.io/badge/Allure%20Report-Live%20Dashboard-yellowgreen?style=for-the-badge&logo=allure)](https://christinekim8.github.io/postman-api-test-automation/)
 [![API Testing](https://img.shields.io/badge/API%20Testing-Postman%20%2F%20Newman-orange?style=for-the-badge&logo=postman)](https://github.com/christinekim8/postman-api-test-automation)
 
-## 🚀 Project Overview: Advanced API Automation & AI-Augmented Quality Engineering
+## 📋 Project Overview: Advanced API Automation & AI-Augmented Quality Engineering
 
-This portfolio showcases a robust **End-to-End API Testing & Automation Pipeline**, designed to simulate complex real-world commerce scenarios. Beyond traditional testing, this project demonstrates a **Human-in-the-Loop (HITL)** approach, leveraging **Gemini Pro** and **Postman agent mode** to maximize engineering efficiency and precision.
+This portfolio demonstrates a production-grade **End-to-End API Test Automation Pipeline** built around a custom Node.js/Express commerce API. 
+This project also demonstrates the ability to effectively integrate AI into the QA process — utilizing **Claude** and **Postman Agent Mode** in a **Human-in-the-Loop** workflow to accelerate script scaffolding and architectural decisions while maintaining full engineering ownership at every stage.
 
-### 💡 Key Focus Areas:
-* **Proactive Test Engineering & Technical Proficiency**: Built a custom REST API server from scratch using Node.js and Express to establish an independent test bed. This allowed for **granular control over backend state management and complex error-handling logic**, enabling the validation of edge cases (e.g., dynamic stock updates, authentication failures) that are often difficult to replicate in standard mock environments.
-* **Strategic Testing**: Comprehensive test coverage including **Positive, Negative, and Edge Case** scenarios for Authentication and Order Management.
-* **Data-Driven Automation (DDT)**: Implemented scalable testing using JSON data files to validate boundary values and complex error states.
-* **Advanced Postman Scripting**: Developed dynamic test scripts using environment variables and custom assertions to verify status codes, response bodies, and security tokens.
-* **Error Handling Logic**: Implemented backend validation to gracefully handle and report invalid JSON payloads and authentication failures.
-* **AI-Powered Productivity**: Utilized AI as a strategic collaborator by providing high-level directions, reviewing AI-generated output, and iteratively refining prompts to achieve high-quality automation scripts in record time.
-* **Continuous Integration (CI/CD)**: Fully integrated with **GitHub Actions** to automate build and test execution on every push. This ensures a "Shift-Left" testing approach where quality is verified at the earliest stage of the development lifecycle.
-
-### 🤖 The AI + Human-in-the-Loop (HITL) Workflow:
-I didn't just use AI; I **orchestrated** it. This project serves as a case study for **AI-Augmented Engineering**, where I:
-1.  Set the strategic direction and architectural requirements.
-2.  Directed AI to generate baseline codes and complex test scripts.
-3.  Conducted rigorous "Human-in-the-loop" reviews and refactoring to ensure production-grade reliability.
-4. Reduced engineering lead time by **70%** by strategically utilizing AI for rapid script scaffolding, allowing a primary focus on high-risk edge cases and system architecture.
+The entire test lifecycle — from environment provisioning to report publishing — is fully automated via Docker Compose and GitHub Actions, with results surfaced as an interactive Allure Report on GitHub Pages.
 
 ## 🛠️ Tech Stack
-* **Backend**: Node.js, Express
-* **Testing**: Postman, Newman (CLI)
-* **CI/CD**: GitHub Actions
-* **Data Handling**: Data-Driven Testing (DDT) with JSON
+| Layer | Technology |
+|---|---|
+| API Server | Node.js, Express |
+| Test Client | Postman, Newman 5.x |
+| Reporting | Allure Report, GitHub Pages |
+| Containerization | Docker, Docker Compose |
+| CI/CD | GitHub Actions |
+| Data-Driven Testing | JSON data files |
 
-## 🚦 How to Run the Tests
+## 💡 Key Engineering Decisions
 
-### 1. Prerequisites
-Ensure you have the following installed on your local machine:
-* **Node.js** (v18 or higher recommended)
-* **Postman Desktop App**
-* **Git**
+* **Custom API Server** — Built from scratch using Node.js and Express to enable granular control over state management, stock logic, and error handling. This allows edge cases (e.g., concurrent stock depletion, JWT expiry) to be tested reliably without depending on a third-party mock service.
 
-### 2. Installation & Setup
-Clone the repository and install the necessary dependencies:
+* **Strategic Test Coverage** — Comprehensive scenarios including Positive, Negative, and Edge Cases for Authentication and Order Management, with Data-Driven Testing (DDT) using JSON data files to validate boundary values and complex error states.
+
+* **Advanced Postman Scripting** — Dynamic test scripts using environment variables and custom assertions to verify status codes, response bodies, and security tokens. Backend validation handles invalid payloads and authentication failures gracefully.
+
+* **Docker Compose Orchestration** — Both the API server and the Newman test runner are containerized and networked together, ensuring a fully reproducible test environment across local machines and CI runners with zero configuration drift.
+
+* **Newman Version Pinning** — `newman@5.3.2` and `newman-reporter-allure@1.0.7` are explicitly pinned in `Dockerfile.tester` after identifying a silent compatibility break in `newman@6.x` that caused the Allure reporter to produce no output without any error.
+
+* **AI-Augmented Workflow (Human-in-the-Loop)** — **Claude** and **Postman Agent Mode** were used as strategic collaborators to accelerate script scaffolding, test case generation, and architectural decisions, while maintaining full engineering ownership at every stage. This workflow reduced engineering lead time by an estimated **70%**.
+
+## ⚙️ CI/CD Pipeline
+
+Every push to `main` triggers the following workflow:
+
+1. **Checkout** source code
+2. **Docker Compose** provisions `api-server` and `api-tester` containers
+3. `api-tester` runs all three Newman test suites and writes Allure results to `reports/allure-results`
+4. **Allure CLI** generates a static report from the results
+5. Report is **deployed to GitHub Pages** automatically
+
+**Live report**: [christinekim8.github.io/postman-api-test-automation](https://christinekim8.github.io/postman-api-test-automation/)
+
+## 🏃 How to Run Locally
+
+### Prerequisites
+- Docker Desktop
+- Git
+
+### Steps
+
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/christinekim8/postman-api-test-automation.git
-
-# Navigate into the project directory
 cd postman-api-test-automation
 
-# Install backend dependencies (including Newman & htmlextra reporter)
-npm install
+# 2. Run the full test suite
+docker compose up --build --exit-code-from api-tester
+
+# 3. Generate and open the Allure Report
+allure generate reports/allure-results --clean -o reports/allure-report
+allure open reports/allure-report
 ```
 
-### 3. Running the API Server
-```bash
-npm start
-```
-Note: The server will run at http://localhost:3000. Please keep this terminal window open.
+> Allure CLI is required for local report generation.
+> Install via: `npm install -g allure-commandline`
 
-### 4. Testing with Postman (Manual)
-To explore the API and run tests manually within the Postman UI:
-1. Open the Postman desktop application.
-2. Click the Import button (top left).
-3. Import the following files located in the /tests directory:
-postman_collection.json
-postman_environment.json
-4. (Data-Driven Testing) To run negative scenarios, use the Postman Runner and select the relevant data file from /tests/data/:
-order_create_invalid_data.json (For order creation validation)
-order_update_invalid_data.json (For order update validation)
-signup_invalid_data.json (For registration validation)
+## ✅ Test Coverage
 
-### 5. Automated Testing & Reporting (CLI)
-Execute all data-driven scenarios and generate professional HTML dashboards with a single command:
-```bash
-npm run test:all
-```
-Reports will be generated in the ./reports directory as create.html, update.html, and signup.html.
----
+### Authentication
+| Scenario | Type |
+|---|---|
+| Sign up with valid credentials | Positive |
+| Sign up with duplicate username | Negative |
+| Sign up with invalid input (DDT) | Negative / Edge |
+| Login with valid credentials | Positive |
+| Login with wrong password | Negative |
 
-## 📌 Future Improvements (To-do)
+### Products
+| Scenario | Type |
+|---|---|
+| Retrieve all products | Positive |
+| Schema and data integrity validation | Positive |
+
+### Orders (CRUD)
+| Scenario | Type |
+|---|---|
+| Create order with valid product | Positive |
+| Retrieve all orders | Positive |
+| Retrieve single order | Positive |
+| Retrieve non-existent order | Negative |
+| Update order quantity | Positive |
+| Update order with invalid quantity (DDT) | Negative / Edge |
+| Cancel order | Positive |
+
+
+## 🔭 Future Improvements
 
 While the current version covers core functionalities and critical paths, I plan to expand the project with the following enhancements:
 
 * **Comprehensive Test Coverage**: Implement all possible test scenarios to achieve full coverage, focusing heavily on complex **Negative** and **Edge Cases** (e.g., race conditions in stock updates).
-* **Performance Testing**: Integrate JMeter to evaluate server stability under high-load scenarios. 
+* **Performance Testing**: Integrate K6 or JMeter to evaluate server stability under high-load scenarios. 

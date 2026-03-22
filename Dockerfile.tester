@@ -1,0 +1,7 @@
+FROM node:18-alpine
+RUN mkdir -p /newman-modules
+WORKDIR /newman-modules
+RUN npm install newman@5.3.2 newman-reporter-allure@1.0.7
+ENV PATH=/newman-modules/node_modules/.bin:$PATH
+ENV NODE_PATH=/newman-modules/node_modules
+WORKDIR /etc/newman

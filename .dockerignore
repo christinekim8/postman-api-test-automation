@@ -1,0 +1,7 @@
+node_modules
+reports
+allure-report
+.git
+.github
+tests/allure-results
+*.log

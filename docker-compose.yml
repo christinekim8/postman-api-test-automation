@@ -1,36 +1,54 @@
-version: '3.8'
-
 services:
-  # 1. API Server: Runs the Node.js application
   api-server:
     build: .
-    ports:
-      - "3000:3000"
     healthcheck:
-      # Use wget because 'node:18-alpine' does not include curl by default
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
       interval: 5s
-      timeout: 5s
       retries: 5
     networks:
       - test-network
 
-  # 2. API Tester: Runs Newman to execute Postman tests
   api-tester:
-    image: node:18-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.tester
     depends_on:
       api-server:
         condition: service_healthy
     volumes:
       - ./tests:/etc/newman
-      - ./reports:/etc/reports
+      - ./reports/allure-results:/app/reports/allure-results
     networks:
       - test-network
-    # Added 'mkdir -p' inside the container to ensure the directory exists before Newman runs
-    entrypoint: >
-      sh -c "mkdir -p /etc/reports/allure-results && 
-      npm install -g newman newman-reporter-allure && 
-      newman run /etc/newman/postman_collection.json -e /etc/newman/postman_environment.json -r cli,allure --reporter-allure-export /etc/reports/allure-results"
+    entrypoint:
+      - sh
+      - -c
+      - |
+        echo '--- [DEBUG] Reporter 확인 ---'
+        ls /newman-modules/node_modules | grep allure
+        mkdir -p /app/reports/allure-results
+        echo '--- Run 1: signup ---'
+        newman run /etc/newman/postman_collection.json \
+          -e /etc/newman/postman_environment.json \
+          -d /etc/newman/data/signup_invalid_data.json \
+          -r cli,allure \
+          --reporter-allure-export /app/reports/allure-results
+        echo '--- Run 2: order_create ---'
+        newman run /etc/newman/postman_collection.json \
+          -e /etc/newman/postman_environment.json \
+          -d /etc/newman/data/order_create_invalid_data.json \
+          -r cli,allure \
+          --reporter-allure-export /app/reports/allure-results
+        echo '--- Run 3: order_update ---'
+        newman run /etc/newman/postman_collection.json \
+          -e /etc/newman/postman_environment.json \
+          -d /etc/newman/data/order_update_invalid_data.json \
+          -r cli,allure \
+          --reporter-allure-export /app/reports/allure-results
+        echo '--- [DEBUG] 파일 확인 ---'
+        ls -la /app/reports/allure-results
+        sync
+
 networks:
   test-network:
     driver: bridge

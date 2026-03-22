@@ -106,3 +106,8 @@ While the current version covers core functionalities and critical paths, I plan
 
 * **Comprehensive Test Coverage**: Implement all possible test scenarios to achieve full coverage, focusing heavily on complex **Negative** and **Edge Cases** (e.g., race conditions in stock updates).
 * **Performance Testing**: Integrate K6 or JMeter to evaluate server stability under high-load scenarios. 
+
+## ✍️ Contact & Author
+### Minkyung (Christine) Kim - QA Lead / Senior Quality Engineer
+#### LinkedIn: https://www.linkedin.com/in/testninja/
+#### GitHub: https://github.com/christinekim8

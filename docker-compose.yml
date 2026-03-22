@@ -24,7 +24,7 @@ services:
       - sh
       - -c
       - |
-        echo '--- [DEBUG] Reporter 확인 ---'
+        echo '--- [DEBUG] Verify reporter installation ---'
         ls /newman-modules/node_modules | grep allure
         mkdir -p /app/reports/allure-results
         echo '--- Run 1: signup ---'
@@ -45,7 +45,7 @@ services:
           -d /etc/newman/data/order_update_invalid_data.json \
           -r cli,allure \
           --reporter-allure-export /app/reports/allure-results
-        echo '--- [DEBUG] 파일 확인 ---'
+        echo '--- [DEBUG] Verify output files ---'
         ls -la /app/reports/allure-results
         sync
 

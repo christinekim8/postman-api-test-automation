@@ -29,6 +29,8 @@ The entire test lifecycle — from environment provisioning to report publishing
 
 * **Advanced Postman Scripting** — Dynamic test scripts using environment variables and custom assertions to verify status codes, response bodies, and security tokens. Backend validation handles invalid payloads and authentication failures gracefully.
 
+* **Authentication Secret and Password Storage** — The API requires a `JWT_SECRET` of at least 32 bytes from the environment and stores passwords as bcrypt hashes rather than plaintext. For this demo, users and orders remain in memory and are cleared when the server restarts; a production service should use a managed secret store, persistent database, rate limiting, and a reviewed password-hashing configuration.
+
 * **Docker Compose Orchestration** — Both the API server and the Newman test runner are containerized and networked together, ensuring a fully reproducible test environment across local machines and CI runners with zero configuration drift.
 
 * **Newman Version Pinning** — `newman@5.3.2` and `newman-reporter-allure@1.0.7` are explicitly pinned in `Dockerfile.tester` after identifying a silent compatibility break in `newman@6.x` that caused the Allure reporter to produce no output without any error.
@@ -50,6 +52,7 @@ Every push to `main` triggers the following workflow:
 ## 🏃 How to Run Locally
 
 ### Prerequisites
+- Node.js
 - Docker Desktop
 - Git
 
@@ -60,24 +63,25 @@ Every push to `main` triggers the following workflow:
 git clone https://github.com/christinekim8/postman-api-test-automation.git
 cd postman-api-test-automation
 
-# 2. Run the full test suite
-docker compose up --build --exit-code-from api-tester
+# 2. Install dependencies and run the full test suite
+npm ci
+npm run test:all
+```
 
-# 3. Generate and open the Allure Report
+`npm run test:all` creates a local-only `.env` with a random JWT secret if one does not already exist, then uses Docker Compose to build the API and Newman containers and run all DDT suites. No manual server startup or secret setup is needed. The `.env` file is git-ignored. HTML reports are written to `reports/`.
+
+To run Docker Compose directly instead of through npm, first provide a `.env` with a `JWT_SECRET` of at least 32 bytes:
+
+```powershell
+# Generate a local-only key in .env (the file is git-ignored)
+node -e "console.log('JWT_SECRET=' + require('crypto').randomBytes(32).toString('hex'))" | Set-Content -Encoding ascii .env
+docker compose up --build --exit-code-from api-tester
+```
+
+```bash
+# Generate and open the Allure report
 allure generate reports/allure-results --clean -o reports/allure-report
 allure open reports/allure-report
-```
-
-To run the tests directly with Newman instead, start the API in one terminal:
-
-```bash
-npm start
-```
-
-Then run the suites in a second terminal:
-
-```bash
-npm run test:all
 ```
 
 > Allure CLI is required for local report generation.

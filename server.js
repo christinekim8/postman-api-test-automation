@@ -9,10 +9,15 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SECRET_KEY = "australia-sqa-portfolio-key";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET || Buffer.byteLength(JWT_SECRET, 'utf8') < 32) {
+    throw new Error('JWT_SECRET must be set to at least 32 bytes.');
+}
 
 app.use(bodyParser.json());
 
@@ -53,7 +58,7 @@ const authenticateToken = (req, res, next) => {
 
     if (!token) return res.status(401).json({ message: "Access denied. Token missing." });
 
-    jwt.verify(token, SECRET_KEY, (err, user) => {
+    jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ message: "Invalid or expired token." });
         req.user = user;
         next();
@@ -61,7 +66,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 // --- [1] AUTH: User Registration (POST /signup) ---
-app.post('/signup', (req, res) => {
+app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
     const normalizedUsername = typeof username === 'string' ? username.trim() : '';
 
@@ -73,9 +78,9 @@ app.post('/signup', (req, res) => {
     }
 
     // Password length check (At least 8 characters)
-    if (typeof password !== 'string' || password.length < 8) {
+    if (typeof password !== 'string' || password.length < 8 || Buffer.byteLength(password, 'utf8') > 72) {
         return res.status(400).json({
-            message: "Password must be at least 8 characters long."
+            message: "Password must be at least 8 characters and no more than 72 bytes."
         });
     }
     // 1. Check if the user already exists
@@ -86,21 +91,36 @@ app.post('/signup', (req, res) => {
         return res.status(409).json({ message: "User already exists." });
     }
 
-    // 3. If not, create a new user
-    users.push({ username: normalizedUsername, password });
-    res.status(201).json({ message: "User registered successfully." });
+    try {
+        const passwordHash = await bcrypt.hash(password, 10);
+        users.push({ username: normalizedUsername, passwordHash });
+        res.status(201).json({ message: "User registered successfully." });
+    } catch (error) {
+        console.error("Password hashing failed:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 });
 
 // --- [2] AUTH: User Login (POST /login) ---
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    const user = users.find(u => u.username === username && u.password === password);
+    const user = users.find(u => u.username === username);
+    let passwordMatches = false;
 
-    if (!user) {
+    try {
+        if (user && typeof password === 'string') {
+            passwordMatches = await bcrypt.compare(password, user.passwordHash);
+        }
+    } catch (error) {
+        console.error("Password comparison failed:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+
+    if (!passwordMatches) {
         return res.status(401).json({ message: "Authentication failed. Invalid credentials." });
     }
 
-    const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
     res.json({ token });
 });
 

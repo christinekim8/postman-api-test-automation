@@ -8,7 +8,7 @@
     "test:signup": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/signup_invalid_data.json --env-var base_url=http://localhost:3000 --folder \"POST - Sign Up (Negative - Data Driven)\" -r htmlextra --reporter-htmlextra-export ./reports/signup.html",
     "test:order-create": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_create_invalid_data.json --env-var base_url=http://localhost:3000 --folder \"POST - Sign Up (Positive)\" --folder \"POST - Login (Positive)\" --folder \"POST - Create Order (Negative - Data Driven)\" -r htmlextra --reporter-htmlextra-export ./reports/create.html",
     "test:order-update": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_update_invalid_data.json --env-var base_url=http://localhost:3000 --folder \"POST - Sign Up (Positive)\" --folder \"POST - Login (Positive)\" --folder \"GET - Get All Products (Positive)\" --folder \"POST - Create Order (Positive)\" --folder \"PUT - Update Order (Negative - Data Driven)\" --folder \"DELETE - Cancel Order (Positive)\" -r htmlextra --reporter-htmlextra-export ./reports/update.html",
-    "test:all": "npm run test:signup && npm run test:order-create && npm run test:order-update"
+    "test:all": "node -e \"const fs=require('node:fs'); if(!fs.existsSync('.env')) fs.writeFileSync('.env', 'JWT_SECRET='+require('node:crypto').randomBytes(32).toString('hex')+'\\n', {flag:'wx'})\" && docker compose up --build --force-recreate --exit-code-from api-tester"
   },
   "keywords": [
     "api-testing",
@@ -20,6 +20,7 @@
   "author": "Christine Kim",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3"

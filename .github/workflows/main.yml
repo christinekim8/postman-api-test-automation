@@ -20,6 +20,9 @@ jobs:
       - name: Create report directory
         run: mkdir -p reports/allure-results
 
+      - name: Configure ephemeral JWT secret
+        run: echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+
       - name: Run Tests with Docker Compose
         run: docker compose up --build --exit-code-from api-tester
 

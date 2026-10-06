@@ -1,1 +1,0 @@
-level: log, messages: [DDT Log] Case: Registration with Missing Password | Server Response: Password must be at least 8 characters long.

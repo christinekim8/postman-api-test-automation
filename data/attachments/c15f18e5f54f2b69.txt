@@ -1,1 +1,0 @@
-level: log, messages: [DDT Log] Case: Username Too Short (2 chars) | Server Response: Username must be between 3 and 15 characters.

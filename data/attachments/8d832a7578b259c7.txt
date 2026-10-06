@@ -1,1 +1,0 @@
-level: log, messages: [DDT Log] Case: Username with Only Spaces | Server Response: Username must be between 3 and 15 characters.

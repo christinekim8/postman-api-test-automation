@@ -719,7 +719,7 @@
                   "\r",
                   "// 2. Data Integrity Check: Compare with our environment variable\r",
                   "const jsonData = pm.response.json();\r",
-                  "const expectedId = Number(pm.environment.get(\"latest_order_id\"));\r",
+                  "const expectedId = Number(pm.environment.get(\"random_order_id\"));\r",
                   "\r",
                   "pm.test(\"Retrieved Order ID matches the expected ID\", function () {\r",
                   "    pm.expect(jsonData.orderId).to.eql(expectedId);\r",

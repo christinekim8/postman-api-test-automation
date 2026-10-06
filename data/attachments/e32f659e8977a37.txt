@@ -1,0 +1,1 @@
+level: log, messages: [DDT Log] Case: Registration with Empty Username | Server Response: Username must be between 3 and 15 characters.

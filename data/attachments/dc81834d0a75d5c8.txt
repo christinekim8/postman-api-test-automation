@@ -1,2 +1,0 @@
-level: log, messages: [Dynamic Selection] Total Orders: 1
-level: log, messages: [Dynamic Selection] Picked Order ID 1 (Premium Manuka Honey (MGO 500+)) for next test.

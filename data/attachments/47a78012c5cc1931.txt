@@ -1,1 +1,0 @@
-level: log, messages: [Negative Test] Scenario: Username with Only Spaces | Server Response: Invalid quantity provided.

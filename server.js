@@ -37,15 +37,15 @@ let nextOrderId = 1;
 
 const products = [
     { id: 1, name: "Australian Macadamias (250g)", price: 25.00, stock: 100 },
-    { id: 2, name: "Premium Manuka Honey (MGO 500+)", price: 55.00, stock: 5 },
+    { id: 2, name: "Premium Manuka Honey (MGO 500+)", price: 55.00, stock: 100 },
     { id: 3, name: "Organic Herbal Tea Selection", price: 30.00, stock: 0 },
-    { id: 4, name: "Vegemite Original (220g)", price: 6.50, stock: 50 },
-    { id: 5, name: "Tim Tam Double Coat (200g)", price: 5.00, stock: 20 },
+    { id: 4, name: "Vegemite Original (220g)", price: 6.50, stock: 100 },
+    { id: 5, name: "Tim Tam Double Coat (200g)", price: 5.00, stock: 100 },
     { id: 6, name: "Lucas' Paw Paw Ointment (25g)", price: 7.50, stock: 100 },
-    { id: 7, name: "Eucalyptus Oil (100ml)", price: 12.00, stock: 15 },
-    { id: 8, name: "Kangaroo Jerky (100g)", price: 18.00, stock: 8 },
-    { id: 9, name: "Merino Wool Socks (Grey)", price: 22.00, stock: 3 },
-    { id: 10, name: "Zinc Sunscreen SPF 50+ (200ml)", price: 19.50, stock: 40 }
+    { id: 7, name: "Eucalyptus Oil (100ml)", price: 12.00, stock: 100 },
+    { id: 8, name: "Kangaroo Jerky (100g)", price: 18.00, stock: 100 },
+    { id: 9, name: "Merino Wool Socks (Grey)", price: 22.00, stock: 100 },
+    { id: 10, name: "Zinc Sunscreen SPF 50+ (200ml)", price: 19.50, stock: 100 }
 ];
 
 /**

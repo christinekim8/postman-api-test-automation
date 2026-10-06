@@ -142,20 +142,11 @@
           "name": "POST - Sign Up (Negative - Data Driven)",
           "event": [
             {
-              "listen": "prerequest",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  ""
-                ]
-              }
-            },
-            {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "// 1. Capture dynamic values from the iteration data\r\n// Make sure the key \"testCase\" matches exactly in your JSON file\r\nconst scenario = pm.iterationData.get(\"testCase\");\r\nconst expectedCode = pm.iterationData.get(\"expectedStatus\") || 400;\r\n\r\n// 2. Validate the HTTP Status Code\r\n// Using template literals to display the scenario name in the report\r\npm.test(`Status code is ${expectedCode} for: ${scenario || 'Unknown Scenario'}`, function () {\r\n    pm.response.to.have.status(expectedCode);\r\n});\r\n\r\n// 3. Verify the error response message\r\nconst jsonData = pm.response.json();\r\npm.test(`Error message is present for: ${scenario || 'Unknown Scenario'}`, function () {\r\n    pm.expect(jsonData).to.have.property('message');\r\n    pm.expect(jsonData.message).to.be.a('string');\r\n    \r\n    // Log actual server response for debugging\r\n    console.log(`[DDT Log] Case: ${scenario} | Server Response: ${jsonData.message}`);\r\n});\r\n\r\n// 4. Security Check\r\npm.test(\"Integrity Check: No sensitive data or token returned\", function () {\r\n    pm.expect(jsonData).to.not.have.property(\"password\");\r\n    pm.expect(jsonData).to.not.have.property(\"token\");\r\n});"
+                  "const scenario = pm.iterationData.get(\"testCase\");\r\nconst expectedStatus = Number(pm.iterationData.get(\"expectedStatus\"));\r\n\r\npm.test(`Status code is ${expectedStatus} for: ${scenario}`, function () {\r\n    pm.response.to.have.status(expectedStatus);\r\n});\r\n\r\nconst jsonData = pm.response.json();\r\n\r\npm.test(`Error message is present for: ${scenario}`, function () {\r\n    pm.expect(jsonData.message).to.be.a(\"string\").and.not.empty;\r\n});\r\n\r\npm.test(\"Response does not expose password or token\", function () {\r\n    pm.expect(jsonData).to.not.have.property(\"password\");\r\n    pm.expect(jsonData).to.not.have.property(\"token\");\r\n});"
                 ]
               }
             }
@@ -442,12 +433,12 @@
                   "    console.warn(\"[Pre-request] Failed to parse product list.\");",
                   "}",
                   "",
-                  "// 2. Select a product with enough stock for the later quantity-5 update",
+                  "// 2. Filter products with available stock",
                   "var selectedId = 1; // Default fallback ID (Safety mechanism)",
                   "var selectedQty = 1; // Default quantity",
                   "",
-                  "// The order is increased from quantity 1 to 5, requiring at least 5 units initially",
-                  "var inStockProducts = productList.filter(function(p) { return p.stock >= 5; });",
+                  "// Find products where stock is greater than 0",
+                  "var inStockProducts = productList.filter(function(p) { return p.stock > 0; });",
                   "",
                   "if (inStockProducts.length > 0) {",
                   "    // Select a random product from the available list",
@@ -559,25 +550,21 @@
           "name": "POST - Create Order (Negative - Data Driven)",
           "event": [
             {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Retrieve the product list from environment variables\nvar productListRaw = pm.environment.get(\"product_list\");\nvar productList = [];\n\ntry {\n    if (productListRaw) {\n        productList = JSON.parse(productListRaw);\n    }\n} catch (e) {\n    console.warn(\"[Pre-request] Failed to parse product list.\");\n}\n\n// 2. Filter products with available stock\nvar selectedId = 1; // Default fallback ID (Safety mechanism)\nvar selectedQty = 1; // Default quantity\n\n// Find products where stock is greater than 0\nvar inStockProducts = productList.filter(function(p) { return p.stock > 0; });\n\nif (inStockProducts.length > 0) {\n    // Select a random product from the available list\n    var randomProduct = inStockProducts[Math.floor(Math.random() * inStockProducts.length)];\n    selectedId = randomProduct.id;\n    selectedQty = 1; \n    console.log(`[Pre-request] Selected Product ID: ${selectedId}, Name: ${randomProduct.name}`);\n} else {\n    console.warn(\"[Pre-request] No available products found. Using Default ID: 1\");\n}\n\n// 3. Set Local Variables (Best for temporary data in Runner) ⭐\n// These variables persist only for the current request execution.\npm.variables.set(\"order_pid\", selectedId);\npm.variables.set(\"order_qty\", selectedQty);\n\nconsole.log(`✅ Final Local Variables -> order_pid: ${selectedId}, order_qty: ${selectedQty}`);"
+                ]
+              }
+            },
+            {
               "listen": "test",
               "script": {
-                "exec": [
-                  "const scenario = pm.iterationData.get(\"testCase\");",
-                  "const expectedStatus = Number(pm.iterationData.get(\"expectedStatus\"));",
-                  "",
-                  "pm.test(`Status code is ${expectedStatus} for: ${scenario}`, function () {",
-                  "    pm.response.to.have.status(expectedStatus);",
-                  "});",
-                  "",
-                  "const jsonData = pm.response.json();",
-                  "pm.test(`Error response is valid for: ${scenario}`, function () {",
-                  "    pm.expect(jsonData.message).to.be.a(\"string\").and.not.empty;",
-                  "    pm.expect(jsonData).to.not.have.property(\"order\");",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "const scenario = pm.iterationData.get(\"testCase\");\nconst expectedStatus = Number(pm.iterationData.get(\"expectedStatus\"));\n\npm.test(`Status code is ${expectedStatus} for: ${scenario}`, function () {\n    pm.response.to.have.status(expectedStatus);\n});\n\nconst jsonData = pm.response.json();\n\npm.test(`Error response is valid for: ${scenario}`, function () {\n    pm.expect(jsonData.message).to.be.a(\"string\").and.not.empty;\n    pm.expect(jsonData).to.not.have.property(\"order\");\n});"
+                ]
               }
             }
           ],
@@ -594,6 +581,10 @@
             },
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -616,7 +607,8 @@
               "path": [
                 "orders"
               ]
-            }
+            },
+            "description": "Generated from cURL: curl -X POST \"{{base_url}}/orders\" -H \"Authorization: Bearer {{token}}\" -H \"Content-Type: application/json\" -d \"{\\\"productId\\\": \\\"{{order_pid}}\\\", \\\"quantity\\\": {{order_qty}}}\""
           },
           "response": []
         },
@@ -915,60 +907,30 @@
           "name": "PUT - Update Order (Negative - Data Driven)",
           "event": [
             {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "const quantity = pm.iterationData.get(\"qty\");",
-                  "pm.variables.set(\"update_qty\", quantity === null ? \"null\" : String(quantity));"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
               "listen": "test",
               "script": {
-                "exec": [
-                  "// 1. Retrieve dynamic test data from the iteration file\r",
-                  "const testCaseName = pm.iterationData.get(\"testCase\");\r",
-                  "const expectedStatusCode = pm.iterationData.get(\"expectedStatus\") || 400;\r",
-                  "\r",
-                  "// 2. Validate the HTTP Status Code for each iteration\r",
-                  "pm.test(`Status code is ${expectedStatusCode} for: ${testCaseName}`, function () {\r",
-                  "    pm.response.to.have.status(expectedStatusCode);\r",
-                  "});\r",
-                  "\r",
-                  "// 3. Verify the error response structure and message\r",
-                  "const jsonData = pm.response.json();\r",
-                  "pm.test(`Error message is present for: ${testCaseName}`, function () {\r",
-                  "    pm.expect(jsonData).to.have.property('message');\r",
-                  "    pm.expect(jsonData.message).to.be.a('string');\r",
-                  "    pm.expect(jsonData.message).to.not.be.empty;\r",
-                  "    \r",
-                  "    // Log the result to Postman Console for debugging\r",
-                  "    console.log(`[Negative Test] Scenario: ${testCaseName} | Server Response: ${jsonData.message}`);\r",
-                  "});\r",
-                  "\r",
-                  "// 4. Verify no order object is returned in case of failure\r",
-                  "pm.test(\"Response does not contain order data\", function () {\r",
-                  "    pm.expect(jsonData).to.not.have.property('order');\r",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "// 1. Retrieve dynamic test data from the iteration file\r\nconst testCaseName = pm.iterationData.get(\"testCase\");\r\nconst expectedStatusCode = pm.iterationData.get(\"expectedStatus\") || 400;\r\n\r\n// 2. Validate the HTTP Status Code for each iteration\r\npm.test(`Status code is ${expectedStatusCode} for: ${testCaseName}`, function () {\r\n    pm.response.to.have.status(expectedStatusCode);\r\n});\r\n\r\n// 3. Verify the error response structure and message\r\nconst jsonData = pm.response.json();\r\npm.test(`Error message is present for: ${testCaseName}`, function () {\r\n    pm.expect(jsonData).to.have.property('message');\r\n    pm.expect(jsonData.message).to.be.a('string');\r\n    pm.expect(jsonData.message).to.not.be.empty;\r\n    \r\n    // Log the result to Postman Console for debugging\r\n    console.log(`[Negative Test] Scenario: ${testCaseName} | Server Response: ${jsonData.message}`);\r\n});\r\n\r\n// 4. Verify no order object is returned in case of failure\r\npm.test(\"Response does not contain order data\", function () {\r\n    pm.expect(jsonData).to.not.have.property('order');\r\n});"
+                ]
               }
             },
             {
               "listen": "prerequest",
               "script": {
-                "exec": [
-                  ""
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "const quantity = pm.iterationData.get(\"qty\");\r\npm.variables.set(\"update_qty\", quantity === null ? \"null\" : String(quantity));"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const quantity = pm.iterationData.get(\"qty\");\r\npm.variables.set(\"update_qty\", quantity === null ? \"null\" : String(quantity));"
+                ]
               }
             }
           ],

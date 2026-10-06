@@ -115,7 +115,7 @@ app.post('/orders', authenticateToken, (req, res) => {
         const { productId, quantity } = req.body;
 
         const pid = Number(productId);
-        const qty = Number(quantity);
+        const qty = quantity;
 
         if (!Number.isInteger(pid) || pid <= 0) {
             return res.status(400).json({ message: "Invalid product ID." });
@@ -201,12 +201,8 @@ app.put('/orders/:id', authenticateToken, (req, res) => {
         return res.status(403).json({ message: "Permission denied for this update." });
     }
 
-    // Validate the requested quantity
-    const newQty = parseInt(quantity);
-
-    // Check for null, undefined, non-numeric values, or non-positive integers
-    // This handles both Data-Driven Testing (DDT) edge cases and invalid JSON strings
-    if (quantity === null || quantity === undefined || isNaN(newQty) || newQty <= 0) {
+    const newQty = quantity;
+    if (!Number.isInteger(newQty) || newQty <= 0) {
         return res.status(400).json({ message: "Invalid quantity provided." });
     }
 

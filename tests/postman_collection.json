@@ -15,54 +15,19 @@
             {
               "listen": "prerequest",
               "script": {
-                "exec": [
-                  "const randomSuffix = Math.random().toString(36).substring(2, 8);",
-                  "const uniqueUser = `user_${randomSuffix}`;",
-                  "",
-                  "pm.environment.set(\"signup_username\", uniqueUser);",
-                  "pm.environment.set(\"signup_password\", \"Test@1234\");",
-                  "",
-                  "console.log(\"Registered User:\", uniqueUser);"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "const randomSuffix = Math.random().toString(36).substring(2, 8);\r\nconst uniqueUser = `user_${randomSuffix}`;\r\n\r\npm.environment.set(\"signup_username\", uniqueUser);\r\npm.environment.set(\"signup_password\", \"Test@1234\");"
+                ]
               }
             },
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "// 1. Validate Status Code (Essential for resource creation)\r",
-                  "pm.test(\"Status code is 201 Created\", function () {\r",
-                  "    pm.response.to.have.status(201);\r",
-                  "});\r",
-                  "\r",
-                  "// 2. Validate Success Message\r",
-                  "pm.test(\"Success message is correct\", function () {\r",
-                  "    var jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData.message).to.eql(\"User registered successfully.\");\r",
-                  "});\r",
-                  "\r",
-                  "// 3. Performance Check: Response time should be under 300ms\r",
-                  "pm.test(\"Response time is less than 300ms\", function () {\r",
-                  "    pm.expect(pm.response.responseTime).to.be.below(300);\r",
-                  "});\r",
-                  "\r",
-                  "// 4. Content-Type Check: Ensure it's JSON\r",
-                  "pm.test(\"Content-Type is application/json\", function () {\r",
-                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
-                  "});\r",
-                  "\r",
-                  "// 5. Security Check: Password should NEVER be returned in response body\r",
-                  "pm.test(\"Security Check: Password is not leaked in response\", function () {\r",
-                  "    var jsonData = pm.response.json();\r",
-                  "    pm.expect(jsonData).to.not.have.property('password');\r",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "// 1. Validate Status Code (Essential for resource creation)\r\npm.test(\"Status code is 201 Created\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\n// 2. Validate Success Message\r\npm.test(\"Success message is correct\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData.message).to.eql(\"User registered successfully.\");\r\n});\r\n\r\n// 3. Performance Check: Response time should be under 300ms\r\npm.test(\"Response time is less than 300ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(300);\r\n});\r\n\r\n// 4. Content-Type Check: Ensure it's JSON\r\npm.test(\"Content-Type is application/json\", function () {\r\n    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r\n});\r\n\r\n// 5. Security Check: Password should NEVER be returned in response body\r\npm.test(\"Security Check: Password is not leaked in response\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.not.have.property('password');\r\n});"
+                ]
               }
             }
           ],
@@ -179,61 +144,19 @@
             {
               "listen": "prerequest",
               "script": {
-                "exec": [
-                  "// 1. Get values from data file\r",
-                  "const fileProductId = pm.iterationData.get(\"productId\");\r",
-                  "const fileQty = pm.iterationData.get(\"qty\");\r",
-                  "\r",
-                  "// 2. Fallback logic: If data is missing, set a default to prevent SyntaxError\r",
-                  "// productId 999 is used for \"Non-Existent Product\" tests\r",
-                  "const finalPid = (fileProductId !== undefined) ? fileProductId : 999;\r",
-                  "const finalQty = (fileQty !== undefined) ? fileQty : 0;\r",
-                  "\r",
-                  "// 3. Set variables specifically for the Request Body\r",
-                  "pm.variables.set(\"order_pid\", finalPid);\r",
-                  "pm.variables.set(\"order_qty\", finalQty);\r",
-                  "\r",
-                  "console.log(`[Setup] PID: ${finalPid}, QTY: ${finalQty}`);"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  ""
+                ]
               }
             },
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "// 1. Capture dynamic values from the iteration data\r",
-                  "// Make sure the key \"testCase\" matches exactly in your JSON file\r",
-                  "const scenario = pm.iterationData.get(\"testCase\");\r",
-                  "const expectedCode = pm.iterationData.get(\"expectedStatus\") || 400;\r",
-                  "\r",
-                  "// 2. Validate the HTTP Status Code\r",
-                  "// Using template literals to display the scenario name in the report\r",
-                  "pm.test(`Status code is ${expectedCode} for: ${scenario || 'Unknown Scenario'}`, function () {\r",
-                  "    pm.response.to.have.status(expectedCode);\r",
-                  "});\r",
-                  "\r",
-                  "// 3. Verify the error response message\r",
-                  "const jsonData = pm.response.json();\r",
-                  "pm.test(`Error message is present for: ${scenario || 'Unknown Scenario'}`, function () {\r",
-                  "    pm.expect(jsonData).to.have.property('message');\r",
-                  "    pm.expect(jsonData.message).to.be.a('string');\r",
-                  "    \r",
-                  "    // Log actual server response for debugging\r",
-                  "    console.log(`[DDT Log] Case: ${scenario} | Server Response: ${jsonData.message}`);\r",
-                  "});\r",
-                  "\r",
-                  "// 4. Security Check\r",
-                  "pm.test(\"Integrity Check: No sensitive data or token returned\", function () {\r",
-                  "    pm.expect(jsonData).to.not.have.property(\"password\");\r",
-                  "    pm.expect(jsonData).to.not.have.property(\"token\");\r",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "// 1. Capture dynamic values from the iteration data\r\n// Make sure the key \"testCase\" matches exactly in your JSON file\r\nconst scenario = pm.iterationData.get(\"testCase\");\r\nconst expectedCode = pm.iterationData.get(\"expectedStatus\") || 400;\r\n\r\n// 2. Validate the HTTP Status Code\r\n// Using template literals to display the scenario name in the report\r\npm.test(`Status code is ${expectedCode} for: ${scenario || 'Unknown Scenario'}`, function () {\r\n    pm.response.to.have.status(expectedCode);\r\n});\r\n\r\n// 3. Verify the error response message\r\nconst jsonData = pm.response.json();\r\npm.test(`Error message is present for: ${scenario || 'Unknown Scenario'}`, function () {\r\n    pm.expect(jsonData).to.have.property('message');\r\n    pm.expect(jsonData.message).to.be.a('string');\r\n    \r\n    // Log actual server response for debugging\r\n    console.log(`[DDT Log] Case: ${scenario} | Server Response: ${jsonData.message}`);\r\n});\r\n\r\n// 4. Security Check\r\npm.test(\"Integrity Check: No sensitive data or token returned\", function () {\r\n    pm.expect(jsonData).to.not.have.property(\"password\");\r\n    pm.expect(jsonData).to.not.have.property(\"token\");\r\n});"
+                ]
               }
             }
           ],
@@ -247,7 +170,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"productId\": {{order_pid}},\r\n  \"quantity\": {{order_qty}}\r\n}",
+              "raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -519,12 +442,12 @@
                   "    console.warn(\"[Pre-request] Failed to parse product list.\");",
                   "}",
                   "",
-                  "// 2. Filter products with available stock",
+                  "// 2. Select a product with enough stock for the later quantity-5 update",
                   "var selectedId = 1; // Default fallback ID (Safety mechanism)",
                   "var selectedQty = 1; // Default quantity",
                   "",
-                  "// Find products where stock is greater than 0",
-                  "var inStockProducts = productList.filter(function(p) { return p.stock > 0; });",
+                  "// The order is increased from quantity 1 to 5, requiring at least 5 units initially",
+                  "var inStockProducts = productList.filter(function(p) { return p.stock >= 5; });",
                   "",
                   "if (inStockProducts.length > 0) {",
                   "    // Select a random product from the available list",
@@ -629,6 +552,71 @@
               ]
             },
             "description": "Generated from cURL: curl -X POST \"{{base_url}}/orders\" -H \"Authorization: Bearer {{token}}\" -H \"Content-Type: application/json\" -d \"{\\\"productId\\\": \\\"{{order_pid}}\\\", \\\"quantity\\\": {{order_qty}}}\""
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Create Order (Negative - Data Driven)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const scenario = pm.iterationData.get(\"testCase\");",
+                  "const expectedStatus = Number(pm.iterationData.get(\"expectedStatus\"));",
+                  "",
+                  "pm.test(`Status code is ${expectedStatus} for: ${scenario}`, function () {",
+                  "    pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(`Error response is valid for: ${scenario}`, function () {",
+                  "    pm.expect(jsonData.message).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(jsonData).to.not.have.property(\"order\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"productId\": {{productId}},\r\n  \"quantity\": {{qty}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
           },
           "response": []
         },
@@ -927,6 +915,18 @@
           "name": "PUT - Update Order (Negative - Data Driven)",
           "event": [
             {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const quantity = pm.iterationData.get(\"qty\");",
+                  "pm.variables.set(\"update_qty\", quantity === null ? \"null\" : String(quantity));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
               "listen": "test",
               "script": {
                 "exec": [
@@ -987,7 +987,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"quantity\": \"{{qty}}\"\r\n}",
+              "raw": "{\r\n  \"quantity\": {{update_qty}}\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

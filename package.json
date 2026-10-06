@@ -5,7 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test:all": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_create_invalid_data.json -r htmlextra --suppress-exit-code --reporter-htmlextra-export ./reports/create.html && newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_update_invalid_data.json -r htmlextra --suppress-exit-code --reporter-htmlextra-export ./reports/update.html && newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/signup_invalid_data.json -r htmlextra --suppress-exit-code --reporter-htmlextra-export ./reports/signup.html"  },
+    "test:signup": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/signup_invalid_data.json --env-var base_url=http://localhost:3000 --folder \"POST - Sign Up (Negative - Data Driven)\" -r htmlextra --reporter-htmlextra-export ./reports/signup.html",
+    "test:order-create": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_create_invalid_data.json --env-var base_url=http://localhost:3000 --folder \"POST - Sign Up (Positive)\" --folder \"POST - Login (Positive)\" --folder \"POST - Create Order (Negative - Data Driven)\" -r htmlextra --reporter-htmlextra-export ./reports/create.html",
+    "test:order-update": "newman run tests/postman_collection.json -e tests/postman_environment.json -d tests/data/order_update_invalid_data.json --env-var base_url=http://localhost:3000 --folder \"POST - Sign Up (Positive)\" --folder \"POST - Login (Positive)\" --folder \"GET - Get All Products (Positive)\" --folder \"POST - Create Order (Positive)\" --folder \"PUT - Update Order (Negative - Data Driven)\" --folder \"DELETE - Cancel Order (Positive)\" -r htmlextra --reporter-htmlextra-export ./reports/update.html",
+    "test:all": "npm run test:signup && npm run test:order-create && npm run test:order-update"
+  },
   "keywords": [
     "api-testing",
     "postman",

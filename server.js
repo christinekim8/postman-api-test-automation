@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const SECRET_KEY = "australia-sqa-portfolio-key";
 
 app.use(bodyParser.json());
@@ -31,7 +31,7 @@ let orders = [];
 let nextOrderId = 1;
 
 const products = [
-    { id: 1, name: "Australian Macadamias (250g)", price: 25.00, stock: 10 },
+    { id: 1, name: "Australian Macadamias (250g)", price: 25.00, stock: 100 },
     { id: 2, name: "Premium Manuka Honey (MGO 500+)", price: 55.00, stock: 5 },
     { id: 3, name: "Organic Herbal Tea Selection", price: 30.00, stock: 0 },
     { id: 4, name: "Vegemite Original (220g)", price: 6.50, stock: 50 },
@@ -63,22 +63,23 @@ const authenticateToken = (req, res, next) => {
 // --- [1] AUTH: User Registration (POST /signup) ---
 app.post('/signup', (req, res) => {
     const { username, password } = req.body;
+    const normalizedUsername = typeof username === 'string' ? username.trim() : '';
 
-    // Username length check (3-15 characters)
-    if (!username || username.length < 3 || username.length > 15) {
+    // Username must contain 3-15 non-whitespace characters
+    if (normalizedUsername.length < 3 || normalizedUsername.length > 15) {
         return res.status(400).json({
             message: "Username must be between 3 and 15 characters."
         });
     }
 
     // Password length check (At least 8 characters)
-    if (!password || password.length < 8) {
+    if (typeof password !== 'string' || password.length < 8) {
         return res.status(400).json({
             message: "Password must be at least 8 characters long."
         });
     }
     // 1. Check if the user already exists
-    const userExists = users.find(u => u.username === username);
+    const userExists = users.find(u => u.username === normalizedUsername);
 
     if (userExists) {
         // 2. If exists, return 409 Conflict (Standard for duplicate resources)
@@ -86,7 +87,7 @@ app.post('/signup', (req, res) => {
     }
 
     // 3. If not, create a new user
-    users.push({ username, password });
+    users.push({ username: normalizedUsername, password });
     res.status(201).json({ message: "User registered successfully." });
 });
 
@@ -116,6 +117,14 @@ app.post('/orders', authenticateToken, (req, res) => {
         const pid = Number(productId);
         const qty = Number(quantity);
 
+        if (!Number.isInteger(pid) || pid <= 0) {
+            return res.status(400).json({ message: "Invalid product ID." });
+        }
+
+        if (!Number.isInteger(qty) || qty <= 0) {
+            return res.status(400).json({ message: "Invalid quantity provided." });
+        }
+
         const product = products.find(p => p.id === pid);
 
         if (!product) {
@@ -130,13 +139,14 @@ app.post('/orders', authenticateToken, (req, res) => {
         }
 
         const newOrder = {
-            orderId: orders.length + 1,
+            orderId: nextOrderId++,
             productId: pid,
             productName: product.name,
             quantity: qty,
             username: req.user.username
         };
 
+        product.stock -= qty;
         orders.push(newOrder);
         console.log("✅ Order success!");
 

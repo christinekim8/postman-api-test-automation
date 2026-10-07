@@ -1,6 +1,8 @@
 services:
   api-server:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.api
     environment:
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your environment or .env file}
     healthcheck:
@@ -13,7 +15,7 @@ services:
   api-tester:
     build:
       context: .
-      dockerfile: Dockerfile.tester
+      dockerfile: Dockerfile.newman
     depends_on:
       api-server:
         condition: service_healthy

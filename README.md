@@ -32,7 +32,7 @@ The entire test lifecycle — from environment provisioning to report publishing
 
 * **Docker Compose Orchestration** — Both the API server and the Newman test runner are containerized and networked together, ensuring a fully reproducible test environment across local machines and CI runners with zero configuration drift.
 
-* **Newman Version Pinning** — `newman@5.3.2` and `newman-reporter-allure@1.0.7` are explicitly pinned in `Dockerfile.tester` after identifying a silent compatibility break in `newman@6.x` that caused the Allure reporter to produce no output without any error.
+* **Newman Version Pinning** — `newman@5.3.2` and `newman-reporter-allure@1.0.7` are explicitly pinned in `Dockerfile.newman` after identifying a silent compatibility break in `newman@6.x` that caused the Allure reporter to produce no output without any error.
 
 * **AI-Augmented Workflow (Human-in-the-Loop)** — **Claude** and **Postman Agent Mode** were used as strategic collaborators to accelerate script scaffolding, test case generation, and architectural decisions, while maintaining full engineering ownership at every stage. This workflow reduced engineering lead time by an estimated **70%**.
 

@@ -1,0 +1,2 @@
+level: log, messages: [Pre-request] Selected Product ID: 9, Name: Merino Wool Socks (Grey)
+level: log, messages: ✅ Final Local Variables -> order_pid: 9, order_qty: 1

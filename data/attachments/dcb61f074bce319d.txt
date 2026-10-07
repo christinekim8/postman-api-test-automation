@@ -1,0 +1,2 @@
+level: log, messages: [Pre-request] Selected Product ID: 2, Name: Premium Manuka Honey (MGO 500+)
+level: log, messages: ✅ Final Local Variables -> order_pid: 2, order_qty: 1

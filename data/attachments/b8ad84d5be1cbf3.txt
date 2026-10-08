@@ -1,0 +1,3 @@
+level: log, messages: [Pre-request] Selected Product ID: 1, Name: Australian Macadamias (250g)
+level: log, messages: ✅ Final Local Variables -> order_pid: 1, order_qty: 1
+level: log, messages: Order Created: ID 3, Product: Australian Macadamias (250g)

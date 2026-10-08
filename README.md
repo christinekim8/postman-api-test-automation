@@ -42,7 +42,7 @@ Every push to `main` triggers the following workflow:
 
 1. **Checkout** source code
 2. **Docker Compose** provisions `api-server` and `api-tester` containers
-3. `api-tester` runs the sign-up, order-creation, and order-update data-driven suites against only their selected collection requests, and writes Allure results to `reports/allure-results`
+3. `api-tester` runs all non-data-driven collection requests, then runs the sign-up, order-creation, and order-update data-driven suites, and writes Allure results to `reports/allure-results`
 4. **Allure CLI** generates a static report from the results
 5. Report is **deployed to GitHub Pages** automatically
 

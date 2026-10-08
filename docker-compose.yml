@@ -32,6 +32,31 @@ services:
         mkdir -p /app/reports/allure-results
         find /app/reports/allure-results -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
 
+        echo '--- Run all non-DDT tests ---'
+        if newman run /etc/newman/postman_collection.json \
+          -e /etc/newman/postman_environment.json \
+          --folder "POST - Sign Up (Positive)" \
+          --folder "POST - Sign Up (Negative - Duplicate User)" \
+          --folder "POST - Login (Positive)" \
+          --folder "POST - Login (Negative - Invalid Password)" \
+          --folder "GET - Get All Products (Positive)" \
+          --folder "POST - Create Order (Positive)" \
+          --folder "GET - Retrieve My Orders (Positive)" \
+          --folder "GET - Retrieve Single Order (Positive)" \
+          --folder "GET - Retrieve Single Order (Negative - Order Not Found)" \
+          --folder "PUT - Update Order Quantity (Positive)" \
+          --folder "DELETE - Cancel Order (Positive)" \
+          --env-var "base_url=http://api-server:3000" \
+          -r cli,allure \
+          --reporter-allure-export /app/reports/allure-results
+        then
+          echo 'Non-DDT tests passed'
+        else
+          result=$$?
+          echo "Non-DDT tests failed with exit code $$result"
+          status=1
+        fi
+
         echo '--- Run sign-up DDT suite ---'
         if newman run /etc/newman/postman_collection.json \
           -e /etc/newman/postman_environment.json \

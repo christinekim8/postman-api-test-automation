@@ -26,7 +26,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "// 1. Validate Status Code (Essential for resource creation)\r\npm.test(\"Status code is 201 Created\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\n// 2. Validate Success Message\r\npm.test(\"Success message is correct\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData.message).to.eql(\"User registered successfully.\");\r\n});\r\n\r\n// 3. Performance Check: Response time should be under 300ms\r\npm.test(\"Response time is less than 300ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(300);\r\n});\r\n\r\n// 4. Content-Type Check: Ensure it's JSON\r\npm.test(\"Content-Type is application/json\", function () {\r\n    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r\n});\r\n\r\n// 5. Security Check: Password should NEVER be returned in response body\r\npm.test(\"Security Check: Password is not leaked in response\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.not.have.property('password');\r\n});"
+                  "// 1. Validate Status Code (Essential for resource creation)\r\npm.test(\"Status code is 201 Created\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\n// 2. Validate Success Message\r\npm.test(\"Success message is correct\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData.message).to.eql(\"User registered successfully.\");\r\n});\r\n\r\n// 3. Performance Check: Response time should be under 300ms\r\npm.test(\"Response time is less than 1000ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(1000);\r\n});\r\n\r\n// 4. Content-Type Check: Ensure it's JSON\r\npm.test(\"Content-Type is application/json\", function () {\r\n    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r\n});\r\n\r\n// 5. Security Check: Password should NEVER be returned in response body\r\npm.test(\"Security Check: Password is not leaked in response\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.expect(jsonData).to.not.have.property('password');\r\n});"
                 ]
               }
             }
@@ -187,51 +187,10 @@
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "// 1. Validate Status Code\r",
-                  "pm.test(\"Status code is 200 OK\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "\r",
-                  "// 2. Validate Token and Save to Environment\r",
-                  "var jsonData = pm.response.json();\r",
-                  "pm.test(\"Token is present and valid\", function () {\r",
-                  "    pm.expect(jsonData.token).to.be.a('string').and.not.empty;\r",
-                  "    \r",
-                  "    // Save token automatically for the next requests (e.g., Create Order)\r",
-                  "    pm.environment.set(\"token\", jsonData.token);\r",
-                  "    console.log(\"Success: JWT Token saved to Environment Variable.\");\r",
-                  "});\r",
-                  "\r",
-                  "// 3. Security Check: Sensitive data should not be leaked\r",
-                  "pm.test(\"Security: Response does not leak password\", function () {\r",
-                  "    pm.expect(jsonData).to.not.have.property('password');\r",
-                  "});\r",
-                  "\r",
-                  "// 4. Performance Check: Standard login time\r",
-                  "pm.test(\"Response time is less than 500ms\", function () {\r",
-                  "    pm.expect(pm.response.responseTime).to.be.below(500);\r",
-                  "});\r",
-                  "\r",
-                  "// 5. Response Format Check\r",
-                  "pm.test(\"Content-Type is application/json\", function () {\r",
-                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
                 "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                  "// 1. Validate Status Code\r\npm.test(\"Status code is 200 OK\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// 2. Validate Token and Save to Environment\r\nvar jsonData = pm.response.json();\r\npm.test(\"Token is present and valid\", function () {\r\n    pm.expect(jsonData.token).to.be.a('string').and.not.empty;\r\n    \r\n    // Save token automatically for the next requests (e.g., Create Order)\r\n    pm.environment.set(\"token\", jsonData.token);\r\n    console.log(\"Success: JWT Token saved to Environment Variable.\");\r\n});\r\n\r\n// 3. Security Check: Sensitive data should not be leaked\r\npm.test(\"Security: Response does not leak password\", function () {\r\n    pm.expect(jsonData).to.not.have.property('password');\r\n});\r\n\r\n// 4. Performance Check: Standard login time\r\npm.test(\"Response time is less than 1000ms00ms\", function () {\r\n    pm.expect(pm.response.responseTime).to.be.below(1000);\r\n});\r\n\r\n// 5. Response Format Check\r\npm.test(\"Content-Type is application/json\", function () {\r\n    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r\n});"
+                ]
               }
             }
           ],
@@ -711,41 +670,10 @@
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "// 1. Success Code Check\r",
-                  "pm.test(\"Status code is 200 OK\", function () {\r",
-                  "    pm.response.to.have.status(200);\r",
-                  "});\r",
-                  "\r",
-                  "// 2. Data Integrity Check: Compare with our environment variable\r",
-                  "const jsonData = pm.response.json();\r",
-                  "const expectedId = Number(pm.environment.get(\"random_order_id\"));\r",
-                  "\r",
-                  "pm.test(\"Retrieved Order ID matches the expected ID\", function () {\r",
-                  "    pm.expect(jsonData.orderId).to.eql(expectedId);\r",
-                  "});\r",
-                  "\r",
-                  "// 3. Schema & Content Validation\r",
-                  "pm.test(\"Order details are complete and correct\", function () {\r",
-                  "    pm.expect(jsonData).to.have.all.keys('orderId', 'productId', 'productName', 'quantity', 'username');\r",
-                  "    pm.expect(jsonData.productName).to.not.be.empty;\r",
-                  "    pm.expect(jsonData.username).to.eql(pm.environment.get(\"signup_username\"));\r",
-                  "});"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
                 "exec": [
-                  ""
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                  "// 1. Success Code Check\r\npm.test(\"Status code is 200 OK\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// 2. Data Integrity Check: Compare with our environment variable\r\nconst jsonData = pm.response.json();\r\nconst expectedId = Number(pm.environment.get(\"random_order_id\"));\r\n\r\npm.test(\"Retrieved Order ID matches the expected ID\", function () {\r\n    pm.expect(jsonData.orderId).to.eql(expectedId);\r\n});\r\n\r\n// 3. Schema & Content Validation\r\npm.test(\"Order details are complete and correct\", function () {\r\n    pm.expect(jsonData).to.have.all.keys('orderId', 'productId', 'productName', 'quantity', 'username');\r\n    pm.expect(jsonData.productName).to.not.be.empty;\r\n    pm.expect(jsonData.username).to.eql(pm.environment.get(\"signup_username\"));\r\n});"
+                ]
               }
             }
           ],

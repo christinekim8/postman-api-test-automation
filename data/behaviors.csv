@@ -1,6 +1,6 @@
 "BROKEN","EPIC","FAILED","FEATURE","PASSED","SKIPPED","STORY","UNKNOWN"
-"0","","0","Orders (CRUD)","6","0","orders/{{latest_order_id}}","0"
-"0","","0","Authentication","13","0","signup","0"
 "0","","0","Products","3","0","products","0"
+"0","","0","Authentication","13","0","signup","0"
 "0","","0","Authentication","7","0","login","0"
 "0","","0","Orders (CRUD)","7","0","orders","0"
+"0","","0","Orders (CRUD)","6","0","orders/{{latest_order_id}}","0"

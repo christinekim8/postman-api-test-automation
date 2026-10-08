@@ -1,0 +1,3 @@
+level: log, messages: [Pre-request] Selected Product ID: 6, Name: Lucas' Paw Paw Ointment (25g)
+level: log, messages: ✅ Final Local Variables -> order_pid: 6, order_qty: 1
+level: log, messages: Order Created: ID 2, Product: Lucas' Paw Paw Ointment (25g)

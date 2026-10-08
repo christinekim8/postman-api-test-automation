@@ -30,6 +30,7 @@ services:
       - |
         status=0
         mkdir -p /app/reports/allure-results
+        find /app/reports/allure-results -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
 
         echo '--- Run sign-up DDT suite ---'
         if newman run /etc/newman/postman_collection.json \
